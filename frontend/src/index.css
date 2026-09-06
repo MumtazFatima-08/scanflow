@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  @apply bg-ink-900 text-paper-100 font-sans antialiased;
+  background-image:
+    linear-gradient(rgba(33,30,19,0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(33,30,19,0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+}
+
+::selection {
+  background: theme('colors.signal.amber');
+  color: theme('colors.ink.950');
+}
+
+* {
+  scrollbar-color: theme('colors.ink.600') theme('colors.ink.900');
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: theme('colors.ink.900'); }
+::-webkit-scrollbar-thumb { background: theme('colors.ink.600'); border-radius: 4px; }
+
+a, button {
+  outline-color: theme('colors.signal.amber');
+}
+
+:focus-visible {
+  outline: 2px solid theme('colors.signal.amber');
+  outline-offset: 2px;
+}
+
+.mono-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
