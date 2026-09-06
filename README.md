@@ -4,32 +4,6 @@
 
 ScanFlow is a web-based QR workflow analyzer that goes beyond simply generating or scanning a QR code. It lets users **build structured QR payloads, generate real QR images, decode uploaded QR codes, classify their target type, extract useful fields, and reveal the destination** through a visible step-by-step pipeline.
 
-## 📸 ScanFlow in action
-
-### Generate a QR
-
-![ScanFlow Generate](assets/01-generate.png)
-
-Choose a payload type and build the QR workflow from structured input.
-
-### Generated QR
-
-![Generated QR](assets/02-generated-qr.png)
-
-The generated QR is encoded, verified, and made available as a downloadable PNG.
-
-### Scan & Decode
-
-![Scan and Decode](assets/03-scan-upload.png)
-
-Upload a QR image and send it through the decoding pipeline.
-
-### Decode Result
-
-![Decoded Result](assets/04-decoded-result.png)
-
-ScanFlow identifies the target type and reveals the decoded destination.
-
 ## ✨ What it supports
 
 | Type | What it builds | Standard format |
@@ -126,12 +100,6 @@ scanflow/
 │   │   ├── hooks/
 │   │   └── pages/
 │   └── package.json
-│
-├── assets/
-│   ├── 01-generate.png
-│   ├── 02-generated-qr.png
-│   ├── 03-scan-upload.png
-│   └── 04-decoded-result.png
 │
 ├── README.md
 └── .gitignore
