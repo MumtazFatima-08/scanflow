@@ -1,136 +1,238 @@
 # ScanFlow
 
-**The workflow behind a QR code.**
+> **The workflow behind a QR code.**
 
-QR codes are everywhere — menus, WiFi networks, payment counters, forms, business
-cards. Everyone scans them. Almost nobody sees what actually happens in between
-the scan and the result. ScanFlow shows that, in both directions:
+ScanFlow is a web-based QR workflow analyzer that goes beyond simply generating or scanning a QR code. It lets users **build structured QR payloads, generate real QR images, decode uploaded QR codes, classify their target type, extract useful fields, and reveal the destination** through a visible step-by-step pipeline.
 
-1. **Generate** — give it a website link, a WiFi network, a contact, or a UPI ID,
-   and watch it build a real, scannable QR code step by step.
-2. **Decode** — upload a QR code image (or paste its raw text) and watch it get
-   read, classified, and turned back into the actual target it points to.
+## 📸 ScanFlow in action
 
-It's a real tool, not a mockup: the QR codes it creates are genuinely scannable
-with your phone's camera, and the decoder genuinely reads real QR images.
+### Generate a QR
 
-## What it supports
+![ScanFlow Generate](assets/01-generate.png)
 
-| Type | What it builds | Standard format used |
+Choose a payload type and build the QR workflow from structured input.
+
+### Generated QR
+
+![Generated QR](assets/02-generated-qr.png)
+
+The generated QR is encoded, verified, and made available as a downloadable PNG.
+
+### Scan & Decode
+
+![Scan and Decode](assets/03-scan-upload.png)
+
+Upload a QR image and send it through the decoding pipeline.
+
+### Decode Result
+
+![Decoded Result](assets/04-decoded-result.png)
+
+ScanFlow identifies the target type and reveals the decoded destination.
+
+## ✨ What it supports
+
+| Type | What it builds | Standard format |
 |---|---|---|
 | Website / Link | A plain URL | `https://...` |
-| Form Link | A plain URL (labeled as a form) | `https://...` |
-| Social / Account | A plain URL (labeled as a profile) | `https://...` |
+| Form Link | A plain URL | `https://...` |
+| Social / Account | A profile URL | `https://...` |
 | WiFi Network | Auto-connect WiFi QR | `WIFI:T:...;S:...;P:...;H:...;;` |
 | Contact Card | A shareable contact | vCard 3.0 |
 | UPI / Payment | A UPI payment link | `upi://pay?pa=...` |
 
-These are real, standard QR formats already understood by phone cameras and QR
-apps — ScanFlow isn't inventing its own format.
+These are real, standard QR formats already understood by phone cameras and QR applications.
 
-## How it works
+## 🧠 How it works
 
-Every action — generate or decode — walks through a small pipeline, and the UI
-shows every step instead of jumping straight to the result:
+ScanFlow exposes the processing pipeline instead of hiding everything behind a single **Scan** or **Generate** button.
 
-**Generate:** Validate details → Build the payload string → Encode the QR image
-→ Verify it scans back correctly (a genuine round-trip decode check) → Ready to
-download.
+### Generate
 
-**Decode:** Read the input → Locate the QR code in the image → Decode the raw
-payload → Classify what type of target it is → Extract the structured fields →
-Reveal the target.
-
-## Architecture
-
-```
-backend/app/
-  main.py          FastAPI app, CORS, router wiring
-  api/qr_routes.py  The two endpoints: /api/qr/generate and /api/qr/decode
-  qr/
-    payloads.py      Builds the exact standard-format string for each type
-    parser.py         Reverse direction: classifies + parses a decoded payload
-    qr_image.py        Real QR encode (qrcode) and decode (OpenCV)
-  utils/pipeline.py  Shared pipeline/log result shape used by both directions
-
-frontend/src/
-  App.jsx              Single page, two tabs: Generate / Scan
-  pages/
-    GeneratePanel.jsx   Pick a type, fill fields, watch it get built
-    DecodePanel.jsx      Upload or paste, watch it get read
-  components/
-    PipelineView.jsx / PipelineNode.jsx   Animated step-by-step pipeline
-    ActivityLog.jsx                        Terminal-style log of what happened
-    QRResult.jsx                           The generated, downloadable QR image
-    TargetReveal.jsx                       The decoded target, with real actions
-  data/qrTypes.js       The 6 supported types and their form fields
-  hooks/useWorkflow.js  Paces the (already-complete) backend result into an animation
+```text
+Validate details
+      ↓
+Build payload string
+      ↓
+Encode QR image
+      ↓
+Verify round-trip decode
+      ↓
+Ready to download
 ```
 
-The backend computes the full result in one response; the frontend only
-controls the *timing* of the reveal — every step and log line shown was
-actually produced by the backend, nothing is fabricated for effect.
+### Decode
 
-## Installation
+```text
+Read input
+      ↓
+Locate QR code
+      ↓
+Decode payload
+      ↓
+Classify target type
+      ↓
+Extract fields
+      ↓
+Reveal destination
+```
 
-Requirements: Python 3.10+, Node.js 18+.
+## 🏗️ Architecture
+
+```text
+┌─────────────────────┐
+│   React Frontend    │
+│                     │
+│ Generate / Decode   │
+│ Workflow UI         │
+└──────────┬──────────┘
+           │ HTTP API
+           ▼
+┌─────────────────────┐
+│   FastAPI Backend   │
+│                     │
+│ Payload Processing  │
+│ QR Encoding/Decode  │
+│ Classification      │
+│ Field Extraction    │
+└─────────────────────┘
+```
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React + Vite |
+| Backend | FastAPI |
+| Language | Python |
+| QR Processing | `qrcode` + OpenCV |
+| API | REST |
+
+## 📂 Project Structure
+
+```text
+scanflow/
+├── backend/
+│   ├── app/
+│   │   ├── api/
+│   │   ├── qr/
+│   │   └── utils/
+│   └── requirements.txt
+│
+├── frontend/
+│   ├── src/
+│   │   ├── components/
+│   │   ├── data/
+│   │   ├── hooks/
+│   │   └── pages/
+│   └── package.json
+│
+├── assets/
+│   ├── 01-generate.png
+│   ├── 02-generated-qr.png
+│   ├── 03-scan-upload.png
+│   └── 04-decoded-result.png
+│
+├── README.md
+└── .gitignore
+```
+
+## 🚀 Run Locally
+
+### Backend
 
 ```bash
-# Backend
 cd backend
-pip install -r requirements.txt
+python -m venv .venv
+```
 
-# Frontend
+Windows PowerShell:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+
+Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Start the API:
+
+```bash
+python -m uvicorn app.main:app --reload --port 8000
+```
+
+### Frontend
+
+Open another terminal:
+
+```bash
 cd frontend
 npm install
-```
-
-## Running
-
-```bash
-# Terminal 1
-cd backend
-python3 -m uvicorn app.main:app --reload --port 8000
-
-# Terminal 2
-cd frontend
 npm run dev
 ```
 
-Open http://127.0.0.1:5173. API docs at http://127.0.0.1:8000/docs.
+Then open:
 
-## Testing
-
-```bash
-curl http://127.0.0.1:8000/api/health
-
-# Generate a WiFi QR
-curl -X POST http://127.0.0.1:8000/api/qr/generate \
-  -H "Content-Type: application/json" \
-  -d '{"qr_type":"WIFI","fields":{"ssid":"HomeNetwork","password":"secret123"}}'
-
-# Decode by pasting the payload text directly
-curl -X POST http://127.0.0.1:8000/api/qr/decode -F "text=https://example.com"
-
-# Decode by uploading an image
-curl -X POST http://127.0.0.1:8000/api/qr/decode -F "file=@/path/to/qr.png"
+```text
+http://localhost:5173
 ```
 
-## Try it yourself
+API docs:
 
-- Generate a **WiFi** QR for a network you own, download it, and scan it with
-  a second phone's camera — it should offer to join the network.
-- Generate a **Contact** QR, scan it, and your phone should offer to save it
-  as a new contact.
-- Generate any QR, then immediately paste it back into the **Scan a QR** tab
-  (or re-upload the downloaded image) to see the reverse direction work on
-  the exact same code.
+```text
+http://127.0.0.1:8000/docs
+```
 
-## Safety notes
+## 🔍 Example Processing Log
 
-- WiFi passwords are shown once, only after a successful decode, with a
-  reveal/copy control — ScanFlow never auto-connects to a network for you.
-- UPI QR codes only ever produce a standard payment *link* — no payment is
-  ever processed by ScanFlow itself.
-- Decoding only ever reads the QR's own published payload; it never fetches
-  or previews the destination on your behalf.
+```text
+[VALIDATE] Image received
+[LOCATE]   QR code found in image
+[DECODE]   Payload extracted
+[CLASSIFY] Target type detected
+[EXTRACT]  Relevant fields parsed
+[REVEAL]   Target revealed
+```
+
+The backend computes the actual result; the frontend controls how the workflow is revealed visually.
+
+## 🔐 Safety Notes
+
+- WiFi passwords are only revealed after a successful decode and are not used to auto-connect to a network.
+- UPI QR codes produce a standard payment link; ScanFlow does not process payments.
+- Decoding reads the QR payload and does not fetch or preview the destination automatically.
+- A successfully decoded QR code is not automatically a safe QR code. Review destinations before opening them.
+
+## 🎯 Project Goals
+
+- Understand how QR payloads are structured.
+- Separate image decoding from payload interpretation.
+- Make the QR processing pipeline visible and understandable.
+- Practice API design with FastAPI.
+- Connect a React frontend to a Python backend.
+- Build a project around the logic behind a familiar everyday technology.
+
+## 📌 Future Improvements
+
+- Camera-based live scanning
+- QR history and scan logs
+- More payload formats
+- Suspicious URL detection
+- Payload validation and sanitization
+- Detailed QR metadata inspection
+- Exportable scan reports
+- Authentication and user-specific scan history
+
+## 👩‍💻 Author
+
+**Mumtaz Fatima**  
+BE Computer Science & Engineering — AI & ML
+
+GitHub: [@MumtazFatima-08](https://github.com/MumtazFatima-08)
+
+---
+
+**ScanFlow — understand the workflow behind the scan.**
