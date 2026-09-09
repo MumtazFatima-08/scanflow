@@ -17,6 +17,24 @@ ScanFlow is a web-based QR workflow analyzer that goes beyond simply generating 
 
 These are real, standard QR formats already understood by phone cameras and QR applications.
 
+## 📸 ScanFlow in action
+
+### Generate a QR
+
+![ScanFlow Generate](docs/screenshots/generate.svg)
+
+### Generated QR
+
+![Generated QR](docs/screenshots/generated-qr.svg)
+
+### Scan & Decode
+
+![Scan and Decode](docs/screenshots/scan-upload.svg)
+
+### Decode Result
+
+![Decoded Result](docs/screenshots/decoded-result.svg)
+
 ## 🧠 How it works
 
 ScanFlow exposes the processing pipeline instead of hiding everything behind a single **Scan** or **Generate** button.
@@ -56,7 +74,6 @@ Reveal destination
 ```text
 ┌─────────────────────┐
 │   React Frontend    │
-│                     │
 │ Generate / Decode   │
 │ Workflow UI         │
 └──────────┬──────────┘
@@ -64,7 +81,6 @@ Reveal destination
            ▼
 ┌─────────────────────┐
 │   FastAPI Backend   │
-│                     │
 │ Payload Processing  │
 │ QR Encoding/Decode  │
 │ Classification      │
@@ -87,20 +103,13 @@ Reveal destination
 ```text
 scanflow/
 ├── backend/
-│   ├── app/
-│   │   ├── api/
-│   │   ├── qr/
-│   │   └── utils/
-│   └── requirements.txt
-│
 ├── frontend/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── data/
-│   │   ├── hooks/
-│   │   └── pages/
-│   └── package.json
-│
+├── docs/
+│   └── screenshots/
+│       ├── generate.svg
+│       ├── generated-qr.svg
+│       ├── scan-upload.svg
+│       └── decoded-result.svg
 ├── README.md
 └── .gitignore
 ```
